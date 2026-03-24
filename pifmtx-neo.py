@@ -17,7 +17,7 @@ def cli():
 @cli.command()
 def autostart():
     service_name = "pifmtx-neo"
-    script_path = f"{os.getcwd()}/main.py"
+    script_path = Path("~/pifmtx-neo/main.py").expanduser()
     if os.path.exists(f"/etc/systemd/system/{service_name}.service"):
         print("INFO: Already set to autostart, no need to do anything")
         print("Aborting.")
