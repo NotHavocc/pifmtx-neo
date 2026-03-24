@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PiFmTx-neo Web Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+
+        <header>
+            <img src="logo.png" alt="PiFmTx-neo logo" width="200">
+                <span>web control panel / v1.0</span>
+            </img>
+        </header>
+
+        <div class="freq-block">
+            <div class="freq-label">TX<br>Freq</div>
+            <div class="freq-display" id="freq-display">---.--</div>
+            <div class="freq-unit">MHz</div>
+            <div class="divider"></div>
+            <div class="freq-controls">
+                <input type="number" id="freq-input" min="76" max="108" step="0.1" placeholder="87.5">
+                <input type="submit" value="APPLY" class="btn btn-primary" id="apply-btn">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Audio</h2>
+                <span class="section-tag">FILE UPLOAD</span>
+            </div>
+            <div class="section-body">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="freq" class="freq-hidden">
+                    <div class="upload-row">
+                        <input type="file" name="audio_file" accept="audio/*">
+                        <input type="submit" value="UPLOAD & PLAY" class="btn btn-primary" id="upload-btn">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>SSTV</h2>
+                <span class="section-tag">IMAGE TX</span>
+            </div>
+            <div class="section-body">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="freq" class="freq-hidden">
+                    <div class="field-row">
+                        <label for="sstv_mode">Mode</label>
+                        <input list="sstv_modes" name="sstv_mode" id="sstv_mode" placeholder="select mode...">
+                        <datalist id="sstv_modes">
+                            <option value="Robot36">
+                            <option value="MartinM1">
+                            <option value="Robot24BW">
+                            <option value="ScottieS1">
+                            <option value="PD120">
+                        </datalist>
+                    </div>
+                    <div class="upload-row">
+                        <input type="file" name="img_file" accept="image/*">
+                        <input type="submit" value="UPLOAD & PLAY" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="section jammer-section">
+            <div class="section-header">
+                <h2>Jammer</h2>
+                <span class="section-tag" style="border-color: rgba(255,59,59,0.3); color: rgba(255,59,59,0.5);">USE AT
+                    OWN RISK</span>
+            </div>
+            <div class="section-body">
+                <div class="warning-text">unauthorized use may violate local regulations</div>
+                <button class="btn btn-danger" id="jammer-btn" onclick="location.href='/jammer'">ENABLE</button>
+            </div>
+        </div>
+
+        <div class="stop-bar">
+            <button class="btn-stop" onclick="location.href='/stop'">⬛ STOP ALL</button>
+        </div>
+
+        <div class="bottom-text">
+            made by nothavoc, 2026
+        </div>
+
+    </div>
+
+    <script>
+        const freqInput = document.getElementById('freq-input');
+        const freqDisplay = document.getElementById('freq-display');
+
+        window.addEventListener('load', function () {
+            const savedFreq = localStorage.getItem('last_freq');
+            if (savedFreq && savedFreq !== 'null') {
+                const val = parseFloat(savedFreq);
+                freqDisplay.textContent = val.toFixed(2);
+                freqInput.value = val;
+                updateHiddenFields(val);
+            }
+        });
+
+        function updateHiddenFields(val) {
+            document.querySelectorAll('.freq-hidden').forEach(el => {
+                el.value = isNaN(val) ? '' : val;
+            });
+        }
+
+        freqInput.addEventListener('input', function () {
+            const val = parseFloat(this.value);
+            freqDisplay.textContent = isNaN(val) ? '---.--' : val.toFixed(2);
+            updateHiddenFields(val);
+        });
+
+        document.getElementById('apply-btn').addEventListener('click', function () {
+            const freq = freqInput.value;
+            localStorage.setItem('last_freq', freq);
+
+            fetch('/freq', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ freq: parseFloat(freq) || null })
+            }).then(() => {
+                location.reload();
+            });
+        });
+    </script>
+</body>
+
+</html>
