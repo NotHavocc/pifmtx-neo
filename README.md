@@ -1,7 +1,7 @@
 # PiFmTx-neo <img src="web/logo.png" width="150" align="left">
 
 ![GitHub issues](https://img.shields.io/github/issues/NotHavocc/pifmtx-neo)
-![GitHub all releases](https://img.shields.io/github/downloads/NotHavocc/Upifmtx-neo/total)
+![GitHub all releases](https://img.shields.io/github/downloads/NotHavocc/pifmtx-neo/total)
 ![GitHub](https://img.shields.io/github/license/NotHavocc/pifmtx-neo)
 ![Static Badge](https://img.shields.io/badge/open_source-with_%3C3-blue)
 
