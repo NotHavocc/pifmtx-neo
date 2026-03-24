@@ -74,8 +74,9 @@ def autostart():
     
 @cli.command()
 def start():
+    main_path = Path("~/pifmtx-neo/pifmtx-neo/main.py").expanduser()
     print("INFO: Starting webserver...")
-    process = subprocess.Popen(["python3", "main.py"])
+    process = subprocess.Popen(["python3", main_path])
     
     try:
         print("INFO: Server is on.")
