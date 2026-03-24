@@ -113,11 +113,22 @@ def broadcast_audio(file_path):
 
 def generate_static(process):
     try:
+        if not process.stdin:
+            return
+
         while process.poll() is None:
-            samples = np.random.randint(-32768, 32767, 1024, dtype=np.int16)
+            samples = np.random.randint(-32768, 32767, 2048, dtype=np.int16)
+            
             process.stdin.write(samples.tobytes())
-    except (BrokenPipeError, AttributeError):
-        pass
+            process.stdin.flush() 
+            
+    except (BrokenPipeError, AttributeError, OSError):
+        print("WARNING: Transmission pipe closed.")
+    finally:
+        try:
+            process.stdin.close()
+        except:
+            pass
 
 @app.route('/jammer')
 def start_jammer():
