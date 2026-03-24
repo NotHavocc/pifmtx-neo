@@ -146,7 +146,10 @@ def stop_all():
     
 if __name__ == "__main__":
     print("INFO: Removing upload cache...")
-    shutil.rmtree(f"{os.getcwd()}/uploads/")
-    os.mkdir(f"{os.getcwd()}/uploads/")
+    if os.path.exists(f"{os.getcwd()}/uploads/"):
+        shutil.rmtree(f"{os.getcwd()}/uploads/")
+        os.mkdir(f"{os.getcwd()}/uploads/")
+    else:
+        os.mkdir(f"{os.getcwd()}/uploads/")
     app.run(host="0.0.0.0", port="8000")
 
