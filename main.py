@@ -143,6 +143,11 @@ def start_jammer():
 
 @app.route('/stop')
 def stop_all():
+    global jammer_process
+    if jammer_process:
+        jammer_process.terminate()
+        jammer_process.wait()       
+        jammer_process = None
     try:
         subprocess.run(["sudo", "pkill", "pi_fm_rds"], check=True)
         print("INFO: All transmitter processes terminated.")
@@ -156,11 +161,12 @@ def stop_all():
         return redirect(url_for('index'))
     
 if __name__ == "__main__":
+    uploads_path = Path("~/pifmtx-neo/pifmtx-neo/uploads").expanduser()
     print("INFO: Removing upload cache...")
-    if os.path.exists(f"{os.getcwd()}/uploads/"):
-        shutil.rmtree(f"{os.getcwd()}/uploads/")
-        os.mkdir(f"{os.getcwd()}/uploads/")
+    if os.path.exists(uploads_path):
+        shutil.rmtree(uploads_path)
+        os.mkdir(uploads_path)
     else:
-        os.mkdir(f"{os.getcwd()}/uploads/")
+        os.mkdir(uploads_path)
     app.run(host="0.0.0.0", port="5000")
 
