@@ -7,6 +7,7 @@ sudo apt update && sudo apt upgrade -y
 
 echo "=== Installing dependencies ==="
 sudo apt install -y ffmpeg git build-essential curl pkg-config libssl-dev libsndfile1-dev
+pip install ffmpeg-python PySSTV numpy flask click Pillow --break-system-packages
 
 echo "=== Detecting Raspberry Pi model ==="
 PI_MODEL=$(tr -d '\0' < /proc/device-tree/model)
