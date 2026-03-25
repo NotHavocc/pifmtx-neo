@@ -21,6 +21,8 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    temp_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser()
+    sstv_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/sstv.wav").expanduser()
     audio_data = request.files.get('audio_file')
     image_data = request.files.get('img_file')
 
@@ -29,7 +31,7 @@ def upload_file():
         audio_data.save(audio_path)
         print(f"INFO: Processing audio: {audio_path}")
         audio_encode(audio_path)
-        broadcast_audio("uploads/temp.wav")
+        broadcast_audio(temp_path)
         return redirect(url_for('index'))
 
     if image_data and image_data.filename != '':
@@ -37,7 +39,7 @@ def upload_file():
         image_data.save(img_path)
         print(f"INFO: Processing Image: {img_path}")
         sstv_encode(img_path)
-        broadcast_audio("uploads/sstv.wav")
+        broadcast_audio(sstv_path)
         return redirect(url_for('index'))
         
     return """
@@ -65,7 +67,7 @@ def audio_encode(path):
         if extension != ".wav" :
             print("INFO: File is not .wav, converting...")
             input_file = path
-            output_file = 'uploads/temp.wav'
+            output_file = Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser()
 
             try:
                 (
@@ -80,6 +82,7 @@ def audio_encode(path):
 
 @app.route('/sstv', methods=['POST'])
 def sstv_encode(img_path):
+    sstv_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/sstv.wav").expanduser()
     img = Image.open(img_path)
     mode_var = request.form.get('sstv_mode')
     print(f"INFO: Using {mode_var} transmission mode...")
@@ -99,7 +102,7 @@ def sstv_encode(img_path):
     
     sstv = SelectedMode(img, 44100, 16)
 
-    with open("uploads/sstv.wav", "wb") as f:
+    with open(sstv_path, "wb") as f:
         sstv.write_wav(f)
 
 def broadcast_audio(file_path):
@@ -143,6 +146,7 @@ def start_jammer():
 
 @app.route('/stop')
 def stop_all():
+    temp_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser()
     global jammer_process
     if jammer_process:
         jammer_process.terminate()
@@ -151,13 +155,13 @@ def stop_all():
     try:
         subprocess.run(["sudo", "pkill", "pi_fm_rds"], check=True)
         print("INFO: All transmitter processes terminated.")
-        if os.path.isfile("uploads/temp.wav"):
-            os.remove("uploads/temp.wav")
+        if os.path.isfile(temp_path):
+            os.remove(temp_path)
         return redirect(url_for('index'))
     except subprocess.CalledProcessError:
         print("INFO: No active transmitter processes found to kill.")
-        if os.path.isfile("uploads/temp.wav"):
-            os.remove("uploads/temp.wav")
+        if os.path.isfile(temp_path):
+            os.remove(temp_path)
         return redirect(url_for('index'))
     
 if __name__ == "__main__":
