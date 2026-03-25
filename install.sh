@@ -22,16 +22,6 @@ fi
 SRC_DIR="$REPO_DIR/src"
 cd "$SRC_DIR" || { echo "ERROR: Failed to enter repository src directory"; exit 1; }
 
-if [[ "$PI_MODEL" == *"Zero 2 W"* ]]; then
-    if [ -f Makefile ]; then
-        echo "Patching Makefile for Zero 2 W (RPI_VERSION=3)"
-        sed -i 's/^RPI_VERSION :=.*/RPI_VERSION = 3/' Makefile
-    else
-        echo "ERROR: Makefile not found in src! Cannot patch."
-        exit 1
-    fi
-fi
-
 sed -i 's/^ARCH_CFLAGS.*$/ARCH_CFLAGS = -march=armv7-a -O3 -mtune=arm1176jzf-s -mfloat-abi=hard -mfpu=vfp -ffast-math/' Makefile
 sed -i 's/^TARGET = .*$/TARGET = 3/' Makefile
 
