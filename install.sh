@@ -6,7 +6,7 @@ echo "=== Updating system packages ==="
 sudo apt update && sudo apt upgrade -y
 
 echo "=== Installing dependencies ==="
-sudo apt install -y ffmpeg git build-essential curl pkg-config libssl-dev libsndfile1-dev
+sudo apt install -y ffmpeg git build-essential curl pkg-config libssl-dev libsndfile1-dev python3-pip
 pip install ffmpeg-python PySSTV numpy flask click Pillow --break-system-packages
 
 echo "=== Detecting Raspberry Pi model ==="
