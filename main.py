@@ -21,8 +21,8 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    temp_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser()
-    sstv_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/sstv.wav").expanduser()
+    temp_path = str(Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser())
+    sstv_path = str(Path("~/pifmtx-neo/pifmtx-neo/uploads/sstv.wav").expanduser())
     audio_data = request.files.get('audio_file')
     image_data = request.files.get('img_file')
 
@@ -67,7 +67,7 @@ def audio_encode(path):
         if extension != ".wav" :
             print("INFO: File is not .wav, converting...")
             input_file = path
-            output_file = Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser()
+            output_file = str(Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser())
 
             try:
                 (
@@ -140,13 +140,13 @@ def start_jammer():
         cmd = ["sudo", "pi_fm_rds", "-freq", str(freq), "-audio", "-"]
         jammer_process = subprocess.Popen(cmd, stdin=subprocess.PIPE)
 
-        threading.Thread(target=generate_static, args=(jammer_process), daemon=True).start()
+        threading.Thread(target=generate_static, args=(jammer_process,), daemon=True).start()
         
     return redirect(url_for('index'))
 
 @app.route('/stop')
 def stop_all():
-    temp_path = Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser()
+    temp_path = str(Path("~/pifmtx-neo/pifmtx-neo/uploads/temp.wav").expanduser())
     global jammer_process
     if jammer_process:
         jammer_process.terminate()
